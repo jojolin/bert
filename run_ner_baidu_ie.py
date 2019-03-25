@@ -192,14 +192,6 @@ class NerProcessor(DataProcessor):
         return examples
 
 
-def write_tokens(tokens, mode):
-    if mode=="test":
-        path = os.path.join(FLAGS.output_dir, "token_"+mode+".txt")
-        wf = open(path,'a')
-        for token in tokens:
-            if token!="**NULL**":
-                wf.write(token+'\n')
-        wf.close()
 
 def convert_single_example(ex_index, example, label_list, max_seq_length, tokenizer,mode):
     label_map = {}
@@ -293,16 +285,18 @@ def convert_single_example(ex_index, example, label_list, max_seq_length, tokeni
         label_ids=label_ids,
         #label_mask = label_mask
     )
-    #write_tokens(ntokens,mode)
+
     if mode == "test":
-        path = os.path.join(FLAGS.output_dir, "token_label_test.txt")
-        wf = open(path, 'a')
-        for token, label in zip(ntokens, nlabels):
-            if token != "**NULL**":
-                wf.write(token + '\t' + label + '\n')
-        wf.close()
+        write_test_tokens("token_label_test.txt", ntokens, nlabels)
     return feature
 
+def write_test_tokens(save_file_name, ntokens, nlabels):
+    path = os.path.join(FLAGS.output_dir, save_file_name)
+    wf = open(path, 'a', encoding='utf8')
+    for token, label in zip(ntokens, nlabels):
+        if token != "**NULL**":
+            wf.write(token + '\t' + label + '\n')
+    wf.close()
 
 def filed_based_convert_examples_to_features(
         examples, label_list, max_seq_length, tokenizer, output_file,mode=None
