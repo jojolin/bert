@@ -83,6 +83,7 @@ def convert_example(datafp, data_tgt_fp):
     num = 0
     data_tgt_fo = open(data_tgt_fp, 'w', encoding='utf8')
     data_tgt_fo.write('{}\t{}\n'.format('text_a', 'label')) # write header
+    line_max_len = 0
     with open(datafp, 'r', encoding='utf8') as r:
         for line in r:
             if line.strip() == '':
@@ -97,9 +98,11 @@ def convert_example(datafp, data_tgt_fp):
                     #if x['pos'] == 'nt':
                     #    print('---', ljson)
                     name = pos_name_map.get(x['pos'])
-                    tag_text_ls.append('{}{}{}'.format(name, x['word'], name))
+                    tag_text_ls.append('<{}>{}<{}>'.format(name, x['word'], name))
                 else:
                     tag_text_ls.append(x['word'])
+            if len(tag_text_ls) > line_max_len:
+                line_max_len = len(tag_text_ls)
             #print(''.join(tag_text_ls), '\n')
             for spo in ljson['spo_list']:
                 pre = spo['predicate']
@@ -131,6 +134,7 @@ def convert_example(datafp, data_tgt_fp):
             #    break
 
     data_tgt_fo.close()
+    print('max len(line)', line_max_len)
 
 def _get_label(o, typ=''):
     labels = ['I-{}'.format(typ)] * len(o)
