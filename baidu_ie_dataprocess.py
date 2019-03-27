@@ -111,7 +111,7 @@ def convert_example(datafp, data_tgt_fp):
                 label_obj = _get_label(obj, 'OBJ')
                 label_sub = _get_label(sub, 'SUB')
                 tag_text_copy = tag_text_ls.copy()
-                tag_text_copy.append('“{}”'.format(pre))
+                tag_text_copy.append('<{}>'.format(pre))
                 tag_text = ''.join(tag_text_copy)
                 label_text = ['O'] * len(tag_text)
                 obj_st = tag_text.find(obj)
