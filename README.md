@@ -5,7 +5,8 @@ For original README.md, please see [README.md](https://github.com/google-researc
 
 ## finetune model
 
-1. classifier
-2. ner_coll
-3. [baidu_ie](https://github.com/baidu/information-extraction)
+1. run_ner_CoNLL_2003.sh
+2. run_mrpc_train.sh
+3. run_squad_train.sh
+4. run_ner_baidu_ie.sh, [baidu_ie](https://github.com/baidu/information-extraction)
 
