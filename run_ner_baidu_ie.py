@@ -83,6 +83,18 @@ flags.DEFINE_string(
     "used when creating the Cloud TPU, or a grpc://ip.address.of.tpu:8470 "
     "url.")
 
+tf.flags.DEFINE_string(
+    "tpu_zone", None,
+    "[Optional] GCE zone where the Cloud TPU is located in. If not "
+    "specified, we will attempt to automatically detect the GCE project from "
+    "metadata.")
+
+tf.flags.DEFINE_string(
+    "gcp_project", None,
+    "[Optional] Project name for the Cloud TPU-enabled project. If not "
+    "specified, we will attempt to automatically detect the GCE project from "
+    "metadata.")
+
 flags.DEFINE_float(
     "warmup_proportion", 0.1,
     "Proportion of training to perform linear learning rate warmup for. "
@@ -169,17 +181,17 @@ class DataProcessor(object):
 class NerProcessor(DataProcessor):
     def get_train_examples(self, data_dir):
         return self._create_example(
-            self._read_data(os.path.join(data_dir, "train.tsv")), "train"
+            self._read_data(os.path.join(data_dir, "train.txt")), "train"
         )
 
     def get_dev_examples(self, data_dir):
         return self._create_example(
-            self._read_data(os.path.join(data_dir, "dev.tsv")), "dev"
+            self._read_data(os.path.join(data_dir, "dev.txt")), "dev"
         )
 
     def get_test_examples(self, data_dir):
         return self._create_example(
-            self._read_data(os.path.join(data_dir, "test.tsv")), "test")
+            self._read_data(os.path.join(data_dir, "test.txt")), "test")
 
     def get_labels(self):
         return ["B-SUB", "I-SUB", "O", "B-OBJ", "I-OBJ", "X", "[CLS]", "[SEP]"]
@@ -194,6 +206,7 @@ class NerProcessor(DataProcessor):
         return examples
 
 
+<<<<<<< HEAD
 def write_tokens(tokens, mode):
     if mode == "test":
         path = os.path.join(FLAGS.output_dir, "token_" + mode + ".txt")
@@ -202,6 +215,8 @@ def write_tokens(tokens, mode):
             if token != "**NULL**":
                 wf.write(token + '\n')
         wf.close()
+=======
+>>>>>>> 93d2e12b0cdbb943a99d4c5c152840fb55688424
 
 
 def convert_single_example(ex_index, example, label_list, max_seq_length, tokenizer, mode):
@@ -296,16 +311,22 @@ def convert_single_example(ex_index, example, label_list, max_seq_length, tokeni
         label_ids=label_ids,
         # label_mask = label_mask
     )
+<<<<<<< HEAD
     # write_tokens(ntokens,mode)
+=======
+
+>>>>>>> 93d2e12b0cdbb943a99d4c5c152840fb55688424
     if mode == "test":
-        path = os.path.join(FLAGS.output_dir, "token_label_test.txt")
-        wf = open(path, 'a')
-        for token, label in zip(ntokens, nlabels):
-            if token != "**NULL**":
-                wf.write(token + '\t' + label + '\n')
-        wf.close()
+        write_test_tokens("token_label_test.txt", ntokens, nlabels)
     return feature
 
+def write_test_tokens(save_file_name, ntokens, nlabels):
+    path = os.path.join(FLAGS.output_dir, save_file_name)
+    wf = open(path, 'a', encoding='utf8')
+    for token, label in zip(ntokens, nlabels):
+        if token != "**NULL**":
+            wf.write(token + '\t' + label + '\n')
+    wf.close()
 
 def filed_based_convert_examples_to_features(
         examples, label_list, max_seq_length, tokenizer, output_file, mode=None
